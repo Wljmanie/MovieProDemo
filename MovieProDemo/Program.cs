@@ -2,19 +2,36 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieProDemo.Data;
 using MovieProDemo.Models.Settings;
+using MovieProDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(ConnectionService.GetConnectionString(builder.Configuration)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+//builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddTransient<SeedService>();
+
+
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
+
+
+
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+
+
 
 var app = builder.Build();
 
@@ -33,14 +50,24 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+//var SeedService = app.Services.CreateScope().ServiceProvider.GetRequiredService<SeedService>();
+//await SeedService.ManageDataAsync();
+await app.Services.CreateScope().ServiceProvider.GetRequiredService<SeedService>().ManageDataAsync();
+
+
 
 app.Run();
