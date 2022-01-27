@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieProDemo.Data;
 using MovieProDemo.Models.Settings;
 using MovieProDemo.Services;
+using MovieProDemo.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddTransient<SeedService>();
+
 
 
 builder.Services.AddControllersWithViews();
@@ -29,7 +30,11 @@ builder.Services.AddRazorPages();
 
 
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
+builder.Services.AddTransient<SeedService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IRemoteMovieService, TmDbMovieService>();
+builder.Services.AddScoped<IDataMappingService, TmDbMappingService>();
+builder.Services.AddSingleton<IImageService, BasicImageService>();
 
 
 
