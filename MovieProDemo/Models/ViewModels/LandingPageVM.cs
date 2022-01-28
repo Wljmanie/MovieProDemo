@@ -11,7 +11,7 @@ namespace MovieProDemo.Models.ViewModels
 
         public MovieSearch Popular { get; set; }
         public MovieSearch TopRated { get; set; }
-        public MovieSearch Upcomming { get; set; }
+        public MovieSearch Upcoming { get; set; }
 
 
 

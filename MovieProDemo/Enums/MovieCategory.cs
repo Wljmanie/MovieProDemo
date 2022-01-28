@@ -5,6 +5,6 @@
         now_playing,
         popular,
         top_rated,
-        upcomming
+        upcoming
     }
 }
