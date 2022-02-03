@@ -13,6 +13,7 @@ namespace MovieProDemo.Data
 
        public DbSet<Collection> Collection { get; set; }
        public DbSet<Movie> Movie { get; set; }
+       public DbSet<MovieCollection> MovieCollection { get; set; }
 
 
     }

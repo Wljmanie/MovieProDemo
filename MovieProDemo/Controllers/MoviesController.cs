@@ -188,7 +188,39 @@ namespace MovieProDemo.Controllers
 
         
 
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id, bool local = false)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
 
+            Movie movie = new Movie();
+            if (local)
+            {
+                movie = await _context.Movie.Include(m => m.Cast)
+                                            .Include(m => m.Crew)
+                                            .FirstOrDefaultAsync(m => m.Id == id);
+
+
+            }
+            else
+            {
+                var movieDetail = await _remoteMovieService.MovieDetailAsync((int)id);
+                movie = await _dataMappingService.MapMovieDetailAsync(movieDetail);
+
+            }
+
+            if(movie == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["Local"] = local;
+
+            return View(movie);
+        }
 
 
 
